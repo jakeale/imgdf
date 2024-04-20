@@ -1,10 +1,13 @@
+mod dhash;
+
 use std::{sync::mpsc, thread, time::Duration};
 
-use image::{io::Reader as ImageReader, DynamicImage, ImageError};
+use image::{io::Reader as ImageReader, ImageError};
+
+use dhash::Dhash;
 
 fn main() {
     let _ = read_image();
-    do_some_threading();
 }
 
 fn do_some_threading() {
@@ -35,8 +38,10 @@ fn do_some_threading() {
     }
 }
 
-fn read_image() -> Result<DynamicImage, ImageError> {
-    let img = ImageReader::open("test/test.png")?.decode();
+fn read_image() -> Result<Dhash, ImageError> {
+    let image = ImageReader::open("test/test.png")?.decode();
 
-    img
+    let dhash = Dhash::new(image?);
+
+    Ok(dhash)
 }
