@@ -5,7 +5,7 @@ use std::{sync::mpsc, thread, time::Duration};
 use anyhow::Context;
 use image::io::Reader as ImageReader;
 
-use dhash::{create_dhash, Dhash};
+use dhash::{calculate_dhash, Dhash};
 
 fn main() {
     let _ = read_image();
@@ -40,11 +40,14 @@ fn do_some_threading() {
 }
 
 fn read_image() -> anyhow::Result<Dhash> {
-    let image = ImageReader::open("test/test.png")?
+    let image = ImageReader::open("test/test.jpg")?
         .decode()
         .context("could not decode image")?;
 
-    let dhash = create_dhash(image)?;
+    let dhash = calculate_dhash(&image)?;
+    let dhash2 = calculate_dhash(&image)?;
+    let distance = dhash.hamming_distance(dhash2)?;
+    println!("{}", distance);
 
     Ok(dhash)
 }
