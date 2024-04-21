@@ -2,9 +2,10 @@ mod dhash;
 
 use std::{sync::mpsc, thread, time::Duration};
 
-use image::{io::Reader as ImageReader, ImageError};
+use anyhow::Context;
+use image::io::Reader as ImageReader;
 
-use dhash::Dhash;
+use dhash::{create_dhash, Dhash};
 
 fn main() {
     let _ = read_image();
@@ -38,10 +39,12 @@ fn do_some_threading() {
     }
 }
 
-fn read_image() -> Result<Dhash, ImageError> {
-    let image = ImageReader::open("test/test.png")?.decode();
+fn read_image() -> anyhow::Result<Dhash> {
+    let image = ImageReader::open("test/test.png")?
+        .decode()
+        .context("could not decode image")?;
 
-    let dhash = Dhash::new(image?);
+    let dhash = create_dhash(image)?;
 
     Ok(dhash)
 }
