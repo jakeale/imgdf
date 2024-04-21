@@ -13,6 +13,12 @@ pub struct Dhash {
 }
 
 impl Dhash {
+    /// Compares two hashes by counting the number of bits that are different.
+    ///
+    /// # Return Values
+    /// - `value > 10` means its likely a different image
+    /// - `1 < value < 10` means its a potential variation
+    /// - a value of `0` means its likely a similar picture
     pub fn hamming_distance(&self, other: Dhash) -> Result<usize, ParseIntError> {
         let difference = self.hash_to_u64()? ^ other.hash_to_u64()?;
 
@@ -27,7 +33,7 @@ impl Dhash {
     }
 }
 
-// Creates a difference hash using the given image
+/// Creates a difference hash using the given image
 pub fn calculate_dhash(image: &DynamicImage) -> Result<Dhash, ParseIntError> {
     let processed = preprocess_image(image);
     let difference = compute_difference(processed);
@@ -37,7 +43,7 @@ pub fn calculate_dhash(image: &DynamicImage) -> Result<Dhash, ParseIntError> {
     Ok(Dhash { hash })
 }
 
-// Encodes the difference by converting it from binary -> String
+/// Encodes the difference by converting it from binary -> String
 fn encode(difference: Vec<bool>) -> Result<String, ParseIntError> {
     let binary: String = difference
         .iter()
@@ -51,8 +57,9 @@ fn encode(difference: Vec<bool>) -> Result<String, ParseIntError> {
     Ok(format!("{:X}", num))
 }
 
-// Computes the difference of adjacent pixels by checking if the right pixel is brighter or not
-// An 9x8 image results in 8 rows with 8 differences
+/// Computes the difference of adjacent pixels by checking if the right pixel is brighter or not
+///
+/// An 9x8 image results in 8 rows with 8 differences
 fn compute_difference(image: ImageBuffer<Luma<u8>, Vec<u8>>) -> Vec<bool> {
     let mut difference: Vec<bool> = Vec::new();
     for (x, y, pixel) in image.enumerate_pixels() {
@@ -64,7 +71,7 @@ fn compute_difference(image: ImageBuffer<Luma<u8>, Vec<u8>>) -> Vec<bool> {
     difference
 }
 
-// Preprocesses the image by converting it to a 9x8 grayscale image
+/// Preprocesses the image by converting it to a 9x8 grayscale image
 fn preprocess_image(image: &DynamicImage) -> ImageBuffer<Luma<u8>, Vec<u8>> {
     let resize_width = 9;
     let resize_height = 8;
