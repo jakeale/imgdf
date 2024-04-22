@@ -1,13 +1,17 @@
+mod cli;
 mod dhash;
 
 use std::{sync::mpsc, thread, time::Duration};
 
 use anyhow::Context;
+use clap::Parser;
+use cli::Cli;
 use image::io::Reader as ImageReader;
 
 use dhash::{calculate_dhash, Dhash};
 
 fn main() {
+    let cli = Cli::parse();
     let _ = read_image();
 }
 
@@ -46,8 +50,7 @@ fn read_image() -> anyhow::Result<Dhash> {
 
     let dhash = calculate_dhash(&image)?;
     let dhash2 = calculate_dhash(&image)?;
-    let distance = dhash.hamming_distance(dhash2)?;
-    println!("{}", distance);
+    let _ = dhash.hamming_distance(dhash2)?;
 
     Ok(dhash)
 }

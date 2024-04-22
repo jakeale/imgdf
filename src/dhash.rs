@@ -5,15 +5,16 @@ use image::{
     DynamicImage, ImageBuffer, Luma,
 };
 
-// A representation of a difference hash
-
+/// A representation of a difference hash
 #[derive(Debug)]
 pub struct Dhash {
     hash: String,
 }
 
 impl Dhash {
-    /// Compares two hashes by counting the number of bits that are different.
+    /// Calculates the hamming distance between two `Dhash` instances
+    ///
+    /// Compares their hashes by counting the number of bits that are different
     ///
     /// # Return Values
     /// - `value > 10` means its likely a different image
@@ -23,9 +24,9 @@ impl Dhash {
         let difference = self.hash_to_u64()? ^ other.hash_to_u64()?;
 
         let binary = format!("{:b}", difference);
-        println!("{}", binary);
+        let distance = binary.chars().filter(|&c| c == ('1')).count();
 
-        Ok(binary.chars().filter(|&c| c == ('1')).count())
+        Ok(distance)
     }
 
     fn hash_to_u64(&self) -> Result<u64, ParseIntError> {
@@ -43,7 +44,7 @@ pub fn calculate_dhash(image: &DynamicImage) -> Result<Dhash, ParseIntError> {
     Ok(Dhash { hash })
 }
 
-/// Encodes the difference by converting it from binary -> String
+/// Encodes the difference by converting it from binary array -> `String`
 fn encode(difference: Vec<bool>) -> Result<String, ParseIntError> {
     let binary: String = difference
         .iter()
