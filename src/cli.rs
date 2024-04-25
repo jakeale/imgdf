@@ -13,7 +13,7 @@ pub struct Cli {
     directory: Option<String>,
 }
 fn cli() -> Command {
-    Command::new("imgdf")
+    Command::new("imgsf")
         .about("image similarity utility")
         .arg_required_else_help(true)
         .max_term_width(80)

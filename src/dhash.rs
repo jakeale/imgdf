@@ -1,7 +1,9 @@
 use std::num::ParseIntError;
 
+use anyhow::Context;
 use image::{
     imageops::{grayscale, resize, FilterType::Triangle},
+    io::Reader,
     DynamicImage, ImageBuffer, Luma,
 };
 
@@ -12,9 +14,18 @@ pub struct Dhash {
 }
 
 impl Dhash {
-    /// Calculates the hamming distance between two `Dhash` instances
-    ///
-    /// Compares their hashes by counting the number of bits that are different
+    /// Given a path to an image, return a difference hash
+    pub fn new(path: &str) -> anyhow::Result<Dhash> {
+        let image = Reader::open(path)?
+            .decode()
+            .context("could not decode image")?;
+
+        let hash = calculate_dhash(&image)?;
+
+        Ok(Dhash { hash })
+    }
+
+    /// Compares the hashes of two `Dhash` instances by counting the number of bits that are different
     ///
     /// # Return Values
     /// - `value > 10` means its likely a different image
@@ -35,13 +46,11 @@ impl Dhash {
 }
 
 /// Creates a difference hash using the given image
-pub fn calculate_dhash(image: &DynamicImage) -> Result<Dhash, ParseIntError> {
+fn calculate_dhash(image: &DynamicImage) -> Result<String, ParseIntError> {
     let processed = preprocess_image(image);
     let difference = compute_difference(processed);
 
-    let hash = encode(difference)?;
-
-    Ok(Dhash { hash })
+    encode(difference)
 }
 
 /// Encodes the difference by converting it from binary array -> `String`

@@ -4,14 +4,12 @@ mod dhash;
 use std::{sync::mpsc, thread, time::Duration};
 
 use anyhow::Context;
-use clap::Parser;
-use cli::Cli;
 use image::io::Reader as ImageReader;
 
-use dhash::{calculate_dhash, Dhash};
+use dhash::Dhash;
 
 fn main() {
-    let cli = Cli::parse();
+    // let cli = Cli::parse();
     let _ = read_image();
 }
 
@@ -44,13 +42,9 @@ fn do_some_threading() {
 }
 
 fn read_image() -> anyhow::Result<Dhash> {
-    let image = ImageReader::open("test/test.jpg")?
-        .decode()
-        .context("could not decode image")?;
-
-    let dhash = calculate_dhash(&image)?;
-    let dhash2 = calculate_dhash(&image)?;
-    let _ = dhash.hamming_distance(dhash2)?;
+    let dhash = Dhash::new("test/test.jpg")?;
+    let dhash2 = Dhash::new("test/ggg.jpg")?;
+    println!("{}", dhash.hamming_distance(dhash2)?);
 
     Ok(dhash)
 }
