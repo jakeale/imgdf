@@ -3,14 +3,13 @@ mod dhash;
 
 use std::{sync::mpsc, thread, time::Duration};
 
-use anyhow::Context;
-use image::io::Reader as ImageReader;
-
+use cli::parse_args;
 use dhash::Dhash;
 
 fn main() {
-    // let cli = Cli::parse();
-    let _ = read_image();
+    let _ = parse_args().unwrap();
+
+    // let _ = read_image();
 }
 
 fn do_some_threading() {
