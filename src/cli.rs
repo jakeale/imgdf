@@ -7,21 +7,20 @@ use image::ImageFormat;
 fn validate_images(images: &Vec<PathBuf>) -> Result<(), anyhow::Error> {
     let is_valid = |path: &PathBuf| {
         path.exists()
-            & path.is_file()
-            & ImageFormat::from_path(path).is_ok_and(|format| format.can_read())
+            && path.is_file()
+            && ImageFormat::from_path(path).is_ok_and(|format| format.can_read())
     };
 
-    for image in images.iter() {
-        if !is_valid(image) {
-            return Err(anyhow!("Invalid path or image format: {:?}", image));
-        }
+    if let Some(invalid_image) = images.iter().find(|&image| !is_valid(image)) {
+        return Err(anyhow!("Invalid path or image format: {:?}", invalid_image));
     }
 
     Ok(())
 }
 
 pub fn parse_args() -> Result<Vec<PathBuf>, anyhow::Error> {
-    let matches = cli().get_matches();
+    let cli = cli();
+    let matches = cli.get_matches();
 
     let images: Vec<PathBuf> = matches
         .get_many::<PathBuf>("image")

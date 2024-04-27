@@ -4,12 +4,14 @@ mod dhash;
 use std::{sync::mpsc, thread, time::Duration};
 
 use cli::parse_args;
+use colored::Colorize;
 use dhash::Dhash;
 
-fn main() {
-    let _ = parse_args().unwrap();
+fn run() -> anyhow::Result<()> {
+    let _ = parse_args()?;
 
     // let _ = read_image();
+    Ok(())
 }
 
 fn do_some_threading() {
@@ -46,4 +48,14 @@ fn read_image() -> anyhow::Result<Dhash> {
     println!("{}", dhash.hamming_distance(dhash2)?);
 
     Ok(dhash)
+}
+
+fn main() {
+    match run() {
+        Ok(_) => {}
+        Err(e) => {
+            eprintln!("{} {:#}", "Error:".red(), e);
+            std::process::exit(1);
+        }
+    }
 }
