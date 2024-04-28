@@ -1,4 +1,4 @@
-use std::num::ParseIntError;
+use std::{num::ParseIntError, path::PathBuf};
 
 use anyhow::Context;
 use image::{
@@ -15,7 +15,7 @@ pub struct Dhash {
 
 impl Dhash {
     /// Given a path to an image, return a difference hash
-    pub fn new(path: &str) -> anyhow::Result<Dhash> {
+    pub fn new(path: &PathBuf) -> anyhow::Result<Dhash> {
         let image = Reader::open(path)?
             .decode()
             .context("could not decode image")?;

@@ -37,7 +37,7 @@ fn cli() -> Command {
     Command::new("imgsf")
         .about("image similarity finder")
         .arg_required_else_help(true)
-        .max_term_width(20)
+        .max_term_width(80)
         .arg(
             Arg::new("image")
                 .help(

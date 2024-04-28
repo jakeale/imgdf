@@ -8,9 +8,15 @@ use colored::Colorize;
 use dhash::Dhash;
 
 fn run() -> anyhow::Result<()> {
-    let _ = parse_args()?;
+    let images = parse_args()?;
 
-    // let _ = read_image();
+    let distance = Dhash::new(&images[0])?.hamming_distance(Dhash::new(&images[1])?)?;
+
+    let similarity = ((64.0 - (distance as f32)) / 64.0) * 100.0;
+
+    println!("{} {}", "Hamming distance:".blue().bold(), distance);
+    println!("{} {}%", "Similarity: ".blue().bold(), similarity);
+
     Ok(())
 }
 
@@ -40,14 +46,6 @@ fn do_some_threading() {
             break;
         }
     }
-}
-
-fn read_image() -> anyhow::Result<Dhash> {
-    let dhash = Dhash::new("test/test.jpg")?;
-    let dhash2 = Dhash::new("test/ggg.jpg")?;
-    println!("{}", dhash.hamming_distance(dhash2)?);
-
-    Ok(dhash)
 }
 
 fn main() {
